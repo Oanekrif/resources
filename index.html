@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>University Resources</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>📚 University Resources</h1>
+    <div id="app"></div>
+
+    <script>
+    const data = {
+        "mi": {
+            "name": "Mathématiques / Informatique",
+            "filieres": {
+                "SM-MA": { "name":"SM - MA", "semestres": {} },
+                "SI-2IDL": {
+                    "name":"SI - 2IDL",
+                    "semestres": {
+                        "S1": { "modules": {
+                            "Analise 1": { "cours":"", "td":"#", "tp":"#", "exam":"#" },
+                            "Algebre 1": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Algebre 2": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Mequanique du point": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Thermodinamique": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Informatique 1": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Mtu": { "cours":"#", "td":"#", "tp":"#", "exam":"#" }
+                        }},
+                        "S2": { "modules": {
+                            "Analise 2": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Analise 3": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Algebre 3": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Optique Geo": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Electrostatique et Magnetostatique": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Informatique 2": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Langues": { "cours":"#", "td":"#", "tp":"#", "exam":"#" }
+                        }},
+                        "S3": { "modules": {
+                            "Longuage C": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Programation Web": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "System d'Exploitation": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Architecture d'eordinateur": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "IoT": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Probabilite": { "cours":"#", "td":"#", "tp":"#", "exam":"#" },
+                            "Francais": { "cours":"#", "td":"#", "tp":"#", "exam":"#" }
+                        }}
+                    }
+                }
+            }
+        },
+        "pc": { "name":"Chimie / Physique", "filieres": {} },
+        "bg": { "name":"Biologie / Géologie", "filieres": {} }
+    };
+
+    let state = { domain:null, filiere:null, semestre:null };
+    const app = document.getElementById('app');
+
+    function render() {
+        app.innerHTML = '';
+
+        if(!state.domain) {
+            const h2 = document.createElement('h2'); h2.textContent = 'Choisir un domaine'; app.appendChild(h2);
+            for(let key in data){
+                const div = document.createElement('div'); div.className='box';
+                const a = document.createElement('a'); a.href='#'; a.textContent = data[key].name;
+                a.onclick = () => { state.domain=key; render(); return false; }
+                div.appendChild(a); app.appendChild(div);
+            }
+        } else if(state.domain && !state.filiere){
+            const h2 = document.createElement('h2'); h2.textContent = data[state.domain].name; app.appendChild(h2);
+            const h3 = document.createElement('h3'); h3.textContent = 'Choisir une filière'; app.appendChild(h3);
+            for(let key in data[state.domain].filieres){
+                const div = document.createElement('div'); div.className='box';
+                const a = document.createElement('a'); a.href='#'; a.textContent = data[state.domain].filieres[key].name;
+                a.onclick = () => { state.filiere=key; render(); return false; }
+                div.appendChild(a); app.appendChild(div);
+            }
+            const back = document.createElement('a'); back.className='back'; back.href='#'; back.textContent='⬅ Retour';
+            back.onclick = () => { state.domain=null; render(); return false; }
+            app.appendChild(back);
+        } else if(state.filiere && !state.semestre){
+            const h2 = document.createElement('h2'); h2.textContent = data[state.domain].filieres[state.filiere].name; app.appendChild(h2);
+            const h3 = document.createElement('h3'); h3.textContent='Choisir un semestre'; app.appendChild(h3);
+            for(let key in data[state.domain].filieres[state.filiere].semestres){
+                const div = document.createElement('div'); div.className='box';
+                const a = document.createElement('a'); a.href='#'; a.textContent=key;
+                a.onclick = () => { state.semestre=key; render(); return false; }
+                div.appendChild(a); app.appendChild(div);
+            }
+            const back = document.createElement('a'); back.className='back'; back.href='#'; back.textContent='⬅ Retour';
+            back.onclick = () => { state.filiere=null; render(); return false; }
+            app.appendChild(back);
+        } else {
+            const h2 = document.createElement('h2'); h2.textContent=state.filiere+' - '+state.semestre; app.appendChild(h2);
+            const modules = data[state.domain].filieres[state.filiere].semestres[state.semestre].modules;
+            for(let mod in modules){
+                const div = document.createElement('div'); div.className='box';
+                const strong = document.createElement('strong'); strong.textContent = mod; div.appendChild(strong); div.appendChild(document.createElement('br'));
+                const links = modules[mod];
+                ['cours','td','tp','exam'].forEach(type => {
+                    const a = document.createElement('a'); a.href=links[type]||'#'; a.target='_blank'; 
+                    a.textContent = type.charAt(0).toUpperCase()+type.slice(1); a.style.marginRight='10px';
+                    div.appendChild(a);
+                });
+                app.appendChild(div);
+            }
+            const back = document.createElement('a'); back.className='back'; back.href='#'; back.textContent='⬅ Retour';
+            back.onclick = () => { state.semestre=null; render(); return false; }
+            app.appendChild(back);
+        }
+    }
+
+    render();
+    </script>
+</body>
+</html>
