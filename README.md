@@ -1,2 +1,2 @@
 # Page
-[👆click](https://oanekrif.github.io/resources/)
+[Click Here...]([https://oanekrif.github.io/resources/](https://oanekrif.github.io/myJsExamples/))
